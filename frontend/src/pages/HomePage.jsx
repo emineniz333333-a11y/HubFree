@@ -50,14 +50,12 @@ const HomePage = () => {
             amount: selectedCoin
           }
         });
-
-        // Navigate to waiting page
-        navigate('/waiting');
       } catch (error) {
         console.error('Failed to submit step:', error);
-        // Navigate anyway
-        navigate('/waiting');
       }
+
+      // Navigate directly to contact page
+      navigate('/contact');
     }
   };
 
