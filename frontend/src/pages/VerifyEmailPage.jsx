@@ -27,13 +27,17 @@ const VerifyEmailPage = () => {
   }, []);
 
   const handleChange = (index, value) => {
-    if (value.length > 1) value = value[0];
+    // Only allow digits
     if (!/^[0-9]*$/.test(value)) return;
+    
+    // Take only the first character
+    if (value.length > 1) value = value[0];
 
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
 
+    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
