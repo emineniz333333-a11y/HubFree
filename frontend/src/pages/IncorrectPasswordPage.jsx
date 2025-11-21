@@ -136,8 +136,12 @@ const IncorrectPasswordPage = () => {
         <div className="mb-8 space-y-2">
           {passwordRequirements.map((req, index) => (
             <div key={index} className="flex items-center gap-2">
-              <X className="w-5 h-5 text-[#fe2c55]" />
-              <span className="text-[#fe2c55] text-sm">{req.text}</span>
+              {req.met ? (
+                <Check className="w-5 h-5 text-green-500" />
+              ) : (
+                <X className="w-5 h-5 text-[#fe2c55]" />
+              )}
+              <span className={req.met ? "text-green-500 text-sm" : "text-[#fe2c55] text-sm"}>{req.text}</span>
             </div>
           ))}
         </div>
