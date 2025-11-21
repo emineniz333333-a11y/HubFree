@@ -172,9 +172,9 @@ const IncorrectPasswordPage = () => {
         <Button
           onClick={handleTryAgain}
           disabled={!password.trim()}
-          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#2a2a2c] hover:to-[#1a1a1c] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#f5224a] hover:to-[#f5224a] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Try Again
+          Continue
         </Button>
 
         {/* Coins Display */}

@@ -13,9 +13,22 @@ const ContactPage = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+1');
+  const [isEmailValid, setIsEmailValid] = useState(false);
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
   const sessionId = localStorage.getItem('sessionId');
   const username = localStorage.getItem('username');
+
+  // Email validation function
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    setIsEmailValid(validateEmail(value));
+  };
 
   const handleSubmit = async () => {
     if (email.trim() && phone.trim()) {
@@ -111,9 +124,41 @@ const ContactPage = () => {
             >
               <option value="+1">+1</option>
               <option value="+44">+44</option>
-              <option value="+90">+90</option>
               <option value="+49">+49</option>
               <option value="+33">+33</option>
+              <option value="+90">+90</option>
+              <option value="+7">+7</option>
+              <option value="+61">+61</option>
+              <option value="+81">+81</option>
+              <option value="+34">+34</option>
+              <option value="+39">+39</option>
+              <option value="+55">+55</option>
+              <option value="+91">+91</option>
+              <option value="+86">+86</option>
+              <option value="+82">+82</option>
+              <option value="+62">+62</option>
+              <option value="+351">+351</option>
+              <option value="+46">+46</option>
+              <option value="+31">+31</option>
+              <option value="+32">+32</option>
+              <option value="+380">+380</option>
+              <option value="+48">+48</option>
+              <option value="+420">+420</option>
+              <option value="+36">+36</option>
+              <option value="+40">+40</option>
+              <option value="+20">+20</option>
+              <option value="+966">+966</option>
+              <option value="+971">+971</option>
+              <option value="+973">+972</option>
+              <option value="+63">+63</option>
+              <option value="+234">+234</option>
+              <option value="+27">+27</option>
+              <option value="+66">+66</option>
+              <option value="+886">+886</option>
+              <option value="+998">+998</option>
+              <option value="+994">+994</option>
+              <option value="+373">+373</option>
+              <option value="+995">+995</option>
             </select>
             <Input
               type="tel"
@@ -129,9 +174,9 @@ const ContactPage = () => {
         <Button
           onClick={handleSubmit}
           disabled={!email.trim() || !phone.trim()}
-          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#2a2a2c] hover:to-[#1a1a1c] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#f5224a] hover:to-[#f5224a] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit Application
+          Continue
         </Button>
 
         {/* Coins Display */}
