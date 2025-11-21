@@ -126,17 +126,19 @@ const VerifyPhonePage = () => {
         {/* Code Input */}
         <div className="mb-8">
           <label className="text-white text-lg mb-4 block">Code</label>
-          <div className="flex gap-3 justify-center">
+          <div className="flex gap-2 justify-center">
             {code.map((digit, index) => (
               <input
                 key={index}
                 ref={(el) => (inputRefs.current[index] = el)}
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 maxLength="1"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className={`w-16 h-20 text-center text-2xl font-bold bg-[#1a1a1c] border-2 rounded-xl text-white focus:outline-none transition-all ${
+                className={`w-12 h-14 text-center text-xl font-bold bg-[#1a1a1c] border-2 rounded-lg text-white focus:outline-none transition-all ${
                   index === 0 && !code[0]
                     ? 'border-cyan-400 shadow-lg shadow-cyan-400/20'
                     : digit
