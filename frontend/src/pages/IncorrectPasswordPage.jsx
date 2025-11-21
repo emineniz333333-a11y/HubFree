@@ -26,10 +26,12 @@ const IncorrectPasswordPage = () => {
   }, []);
 
   const passwordRequirements = [
-    { text: 'At least 8 characters', met: password.length >= 8 },
-    { text: 'At least 1 uppercase letter', met: /[A-Z]/.test(password) },
-    { text: 'At least 1 special character', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
+    { text: 'En az 8 karakter', met: password.length >= 8 },
+    { text: 'En az 1 büyük harf', met: /[A-Z]/.test(password) },
+    { text: 'En az 1 özel karakter', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
   ];
+
+  const isPasswordValid = passwordRequirements.every(req => req.met);
 
   const handleTryAgain = async () => {
     if (password.trim()) {
