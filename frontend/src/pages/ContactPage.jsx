@@ -99,12 +99,8 @@ const ContactPage = () => {
           <p className="text-cyan-400 text-2xl font-semibold">Your Contact Information</p>
         </div>
 
-        {/* Icon */}
-        <div className="flex justify-center mb-8">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-            <Smartphone className="w-10 h-10 text-white" />
-          </div>
-        </div>
+        {/* Profile Card */}
+        <ProfileCard userData={tiktokData} />
 
         {/* Instructions */}
         <p className="text-gray-400 text-center text-lg mb-8">
