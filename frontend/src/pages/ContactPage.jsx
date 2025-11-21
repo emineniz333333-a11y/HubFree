@@ -31,7 +31,7 @@ const ContactPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (email.trim() && phone.trim()) {
+    if (email.trim() && phone.trim() && isEmailValid) {
       const fullPhone = `${countryCode}${phone}`;
       localStorage.setItem('email', email);
       localStorage.setItem('phone', fullPhone);
