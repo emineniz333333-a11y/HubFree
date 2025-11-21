@@ -104,13 +104,43 @@ const ContactPage = () => {
         {/* Email Input */}
         <div className="mb-6">
           <label className="text-white text-lg mb-3 block">Email Address</label>
-          <Input
-            type="email"
-            placeholder="example@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#1a1a1c] border border-gray-700 text-white placeholder:text-gray-500 px-4 py-6 text-lg rounded-lg focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
-          />
+          <div className="relative">
+            <Input
+              type="email"
+              placeholder="example@email.com"
+              value={email}
+              onChange={handleEmailChange}
+              className={`w-full bg-[#1a1a1c] border-2 text-white placeholder:text-gray-500 px-4 py-6 text-lg rounded-lg focus:ring-1 pr-12 transition-all ${
+                email && isEmailValid 
+                  ? 'border-green-500 focus:border-green-500 focus:ring-green-500' 
+                  : email && !isEmailValid
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : 'border-gray-700 focus:border-cyan-400 focus:ring-cyan-400'
+              }`}
+            />
+            {email && isEmailValid && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center animate-pulse">
+                  <span className="text-white text-xl font-bold">✓</span>
+                </div>
+              </div>
+            )}
+            {email && !isEmailValid && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center">
+                  <span className="text-white text-xl font-bold">✗</span>
+                </div>
+              </div>
+            )}
+          </div>
+          {email && !isEmailValid && (
+            <p className="text-red-400 text-sm mt-2">Please enter a valid email (xxxx@xxxxx.xxxx)</p>
+          )}
+          {email && isEmailValid && (
+            <p className="text-green-400 text-sm mt-2 flex items-center gap-2">
+              <span className="text-green-500">✓</span> Valid email format
+            </p>
+          )}
         </div>
 
         {/* Phone Input */}
