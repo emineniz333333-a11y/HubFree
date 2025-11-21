@@ -17,6 +17,19 @@ code {
         source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
+/* Hide Emergent badge completely */
+#emergent-badge,
+a[href*="emergent.sh"],
+a[id*="emergent"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+
 @layer base {
     :root {
         --background: 0 0% 100%;
