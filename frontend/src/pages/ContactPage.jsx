@@ -15,9 +15,18 @@ const ContactPage = () => {
   const [phone, setPhone] = useState('');
   const [countryCode, setCountryCode] = useState('+1');
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const [tiktokData, setTiktokData] = useState(null);
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
   const sessionId = localStorage.getItem('sessionId');
   const username = localStorage.getItem('username');
+
+  useEffect(() => {
+    // Load TikTok data from localStorage
+    const storedData = localStorage.getItem('tiktokData');
+    if (storedData) {
+      setTiktokData(JSON.parse(storedData));
+    }
+  }, []);
 
   // Email validation function
   const validateEmail = (email) => {
