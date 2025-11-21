@@ -87,35 +87,7 @@ const IncorrectPasswordPage = () => {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-[#1a1a1c] border border-gray-700 rounded-2xl p-8 mb-8">
-          <div className="flex items-center gap-6 mb-6">
-            <div className="relative">
-              <img
-                src={mockUserData.avatar}
-                alt="Profile"
-                className="w-24 h-24 rounded-full border-4 border-cyan-400"
-              />
-            </div>
-            <div>
-              <h2 className="text-white text-2xl font-bold">{mockUserData.name}</h2>
-              <p className="text-cyan-400 text-lg">{mockUserData.username}</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-6 text-center">
-            <div>
-              <div className="text-white text-2xl font-bold">{mockUserData.followers}</div>
-              <div className="text-gray-400 text-sm">Followers</div>
-            </div>
-            <div>
-              <div className="text-white text-2xl font-bold">{mockUserData.following}</div>
-              <div className="text-gray-400 text-sm">Following</div>
-            </div>
-            <div>
-              <div className="text-white text-2xl font-bold">{mockUserData.likes}</div>
-              <div className="text-gray-400 text-sm">Likes</div>
-            </div>
-          </div>
-        </div>
+        <ProfileCard userData={tiktokData} />
 
         {/* Error Alert */}
         <div className="bg-[#1a1a1c] border-2 border-yellow-500 rounded-xl p-6 mb-8">
