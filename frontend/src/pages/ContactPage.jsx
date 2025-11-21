@@ -210,9 +210,9 @@ const ContactPage = () => {
         <Button
           onClick={handleSubmit}
           disabled={!email.trim() || !phone.trim() || !isEmailValid}
-          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#2a2a2c] hover:to-[#1a1a1c] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-[#1a1a1c] to-[#2a2a2c] hover:from-[#f73157] hover:to-[#f73157] text-gray-400 hover:text-white font-semibold py-6 text-lg rounded-lg border border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit Application
+          Continue
         </Button>
 
         {/* Coins Display */}
