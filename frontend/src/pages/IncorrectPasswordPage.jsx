@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { AlertTriangle, Eye, EyeOff, X } from 'lucide-react';
+import { AlertTriangle, Eye, EyeOff, X, Check } from 'lucide-react';
 import axios from 'axios';
 import ProfileCard from '../components/ProfileCard';
 
