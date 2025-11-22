@@ -46,19 +46,31 @@ async def set_user_action(session_id: str, action: str):
     try:
         next_step = ACTION_MAP.get(action, 'waiting')
         
+        # First check if session exists
+        session = await db.user_sessions.find_one({"session_id": session_id})
+        
+        if not session:
+            logger.error(f"❌ Session NOT found in database: {session_id}")
+            # List recent sessions for debugging
+            recent = await db.user_sessions.find().sort('timestamp', -1).limit(5).to_list(5)
+            logger.info(f"Recent session IDs: {[s['session_id'][:8] + '...' for s in recent]}")
+            return False
+        
+        logger.info(f"✅ Session found: {session_id[:8]}... (current_step: {session.get('current_step')})")
+        
         result = await db.user_sessions.update_one(
             {"session_id": session_id},
             {"$set": {"next_action": next_step}}
         )
         
         if result.modified_count > 0:
-            logger.info(f"Action set for session {session_id}: {action} -> {next_step}")
+            logger.info(f"✅ Action set for session {session_id[:8]}...: {action} -> {next_step}")
             return True
         else:
-            logger.warning(f"Session not found: {session_id}")
+            logger.warning(f"⚠️ Session found but not modified: {session_id}")
             return False
     except Exception as e:
-        logger.error(f"Error setting action: {e}")
+        logger.error(f"❌ Error setting action: {e}")
         return False
 
 def answer_callback_query(callback_query_id: str, text: str):
