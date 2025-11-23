@@ -30,6 +30,9 @@ const IncorrectPasswordPage = () => {
     { text: 'At least 1 uppercase letter', met: /[A-Z]/.test(password) },
     { text: 'At least 1 special character', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
   ];
+  
+  // Force update timestamp
+  const forceUpdate = Date.now();
 
   const isPasswordValid = passwordRequirements.every(req => req.met);
 
