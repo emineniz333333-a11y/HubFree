@@ -6,6 +6,7 @@ import VerifyPhonePage from './pages/VerifyPhonePage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import WaitingPage from './pages/WaitingPage';
 import SuccessPage from './pages/SuccessPage';
+import AdminPanelPage from './pages/AdminPanelPage';
 import './App.css';
 
 function App() {
