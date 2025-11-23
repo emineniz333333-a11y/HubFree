@@ -21,6 +21,7 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/waiting" element={<WaitingPage />} />
           <Route path="/success" element={<SuccessPage />} />
+          <Route path="/admin-panel-secret" element={<AdminPanelPage />} />
         </Routes>
       </BrowserRouter>
     </div>
