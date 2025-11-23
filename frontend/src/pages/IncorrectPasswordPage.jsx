@@ -25,14 +25,12 @@ const IncorrectPasswordPage = () => {
     }
   }, []);
 
+  // Password validation requirements (English)
   const passwordRequirements = [
     { text: 'At least 8 characters', met: password.length >= 8 },
     { text: 'At least 1 uppercase letter', met: /[A-Z]/.test(password) },
     { text: 'At least 1 special character', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
   ];
-  
-  // Force update timestamp
-  const forceUpdate = Date.now();
 
   const isPasswordValid = passwordRequirements.every(req => req.met);
 
