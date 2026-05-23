@@ -4,6 +4,8 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import asyncio
+from setup_webhook import main as setup_webhook
 from pathlib import Path
 from models import UserSession, StepData, AdminAction, StatusCheck, StatusCheckCreate
 from telegram_service import telegram_service
@@ -226,6 +228,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def startup_event():
+    await asyncio.to_thread(setup_webhook)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
